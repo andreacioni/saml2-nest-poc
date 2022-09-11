@@ -4,46 +4,53 @@ import {
   UseGuards,
   Request,
   Get,
-  Redirect,
+  Response,
 } from '@nestjs/common';
+import { resolve } from 'path';
+import express from 'express';
 import { AuthService } from './auth/auth.service';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
-import { LocalAuthGuard } from './auth/local-auth.guard';
-import { LoggedInGuard } from './auth/logged-in.guard';
 import { SamlAuthGuard } from './auth/saml-auth.guard';
+import { UserService } from './user/user.service';
+import { User } from './model/user';
 
 @Controller()
 export class AppController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly userService: UserService,
+  ) {}
 
-  @UseGuards(LocalAuthGuard)
-  @Post('auth/login')
-  async login(@Request() req: any) {
-    return this.authService.login(req.user);
+  @Get()
+  async homepage(@Response() res: express.Response) {
+    res.sendFile(resolve('web/index.html'));
   }
 
-  @Get('auth/saml/login')
+  @Get('api/auth/sso/saml/login')
   @UseGuards(SamlAuthGuard)
   async samlLogin() {
+    //this route is handled by passport-saml
     return;
   }
 
-  @Post('auth/saml/ac')
-  @Redirect('/is_authenticated')
+  @Post('api/auth/sso/saml/ac')
   @UseGuards(SamlAuthGuard)
-  async samlAssertionConsumer() {
-    return;
+  async samlAssertionConsumer(
+    @Request() req: express.Request,
+    @Response() res: express.Response,
+  ) {
+    //this routes gets executed on successful assertion from IdP
+    if (req.user) {
+      const user = req.user as User;
+      const jwt = this.authService.getTokenForUser(user);
+      this.userService.storeUser(user);
+      this, res.redirect('/?jwt=' + jwt);
+    }
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('profile')
+  @Get('api/profile')
   getProfile(@Request() req: any) {
-    return req.user;
-  }
-
-  @Get('is_authenticated')
-  @UseGuards(LoggedInGuard)
-  isAuthenticated(@Request() req: any) {
     return req.user;
   }
 }

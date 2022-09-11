@@ -1,0 +1,69 @@
+<html>
+    <head>
+        <title>Home</title>
+        <script>
+            const goToLoginPage = () => {
+                document.getElementById("user-profile-div").style = 'display: none;'
+                 document.getElementById("login-div").style = ''
+            }
+    
+            const goToProfilePage = () => {
+                document.getElementById("user-profile-div").style = ''
+                document.getElementById("login-div").style = 'display: none;'
+            }
+    
+            const loadProfile =async () => {
+                const params = (new URL(document.location)).searchParams;
+                let jwt;
+                
+                if(params.has("jwt")) {
+                    jwt = params.get("jwt");
+                    localStorage.setItem('jwt', jwt);
+                    window.location.href = '/'
+                } else {
+                    jwt = localStorage.getItem('jwt')
+                }
+    
+    
+                const options = jwt ? {
+                    headers: {'Authorization': 'Bearer ' + jwt}
+                } : undefined;
+    
+                const res = await fetch("/api/profile", options);
+    
+                if(!res.ok) {
+                    localStorage.removeItem('jwt');
+                    goToLoginPage()
+                    return
+                } else {
+                    const json = await res.json()
+    
+                    goToProfilePage()
+                    document.getElementById("userid").innerHTML = json.username;
+                    document.getElementById("phone").innerHTML = json.phone;
+                    document.getElementById("email").innerHTML = json.email;
+                }
+            }
+    
+            const logout = () => {
+                localStorage.removeItem('jwt');
+                goToLoginPage()
+            }
+        </script>
+    </head>
+    <body onload="loadProfile()">
+        <div id="login-div">
+            <p>User not logged in</p>
+            <p><a id="login" href="/api/auth/sso/saml/login">Log In</a></p>
+        </div>
+        <div style="display: none;" id="user-profile-div">
+            <p>Hello <span id="userid"></span>!</p>
+            <ul>
+                <li>Email: <span id="email"></span></li>
+                <li>Phone: <span id="phone"></span></li>
+            </ul>
+            <p><a id="logout" href="#" onclick="logout()">Log Out</a></p>
+        </div>
+        
+    </body>
+</html>
