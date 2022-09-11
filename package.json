@@ -28,7 +28,6 @@
     "@nestjs/platform-express": "^9.0.0",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.0",
-    "passport-local": "^1.0.0",
     "passport-saml": "^3.2.1",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
