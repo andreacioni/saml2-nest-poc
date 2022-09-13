@@ -25,6 +25,6 @@ import { SamlStrategy } from './saml.strategy';
     SamlAuthGuard,
     SamlStrategy,
   ],
-  exports: [AuthService],
+  exports: [AuthService, SamlStrategy],
 })
 export class AuthModule {}

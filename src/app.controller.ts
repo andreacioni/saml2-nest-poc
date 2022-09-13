@@ -13,12 +13,14 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { SamlAuthGuard } from './auth/saml-auth.guard';
 import { UserService } from './user/user.service';
 import { User } from './model/user';
+import { SamlStrategy } from './auth/saml.strategy';
 
 @Controller()
 export class AppController {
   constructor(
     private readonly authService: AuthService,
     private readonly userService: UserService,
+    private readonly samlStrategy: SamlStrategy,
   ) {}
 
   @Get()
@@ -52,5 +54,12 @@ export class AppController {
   @Get('api/profile')
   getProfile(@Request() req: any) {
     return req.user;
+  }
+
+  @Get('api/auth/sso/saml/metadata')
+  async getSpMetadata(@Response() res: express.Response) {
+    const ret = this.samlStrategy.generateServiceProviderMetadata(null, null);
+    res.type('application/xml');
+    res.send(ret);
   }
 }
