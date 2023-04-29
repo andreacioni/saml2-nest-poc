@@ -8,17 +8,17 @@ import {
 } from '@nestjs/common';
 import { resolve } from 'path';
 import express from 'express';
-import { AuthService } from './auth/auth.service';
-import { JwtAuthGuard } from './auth/jwt-auth.guard';
-import { SamlAuthGuard } from './auth/saml-auth.guard';
-import { UserService } from './user/user.service';
-import { User } from './model/user';
-import { SamlStrategy } from './auth/saml.strategy';
+import { SecurityService } from '@app/security/security.service';
+import { JwtAuthGuard } from '@app/security/jwt-auth.guard';
+import { SamlAuthGuard } from '@app/security/saml-auth.guard';
+import { UserService } from '../../../libs/security/src/user/user.service';
+import { User } from '../../../libs/commons/src/user';
+import { SamlStrategy } from '@app/security/saml.strategy';
 
 @Controller()
 export class AppController {
   constructor(
-    private readonly authService: AuthService,
+    private readonly authService: SecurityService,
     private readonly userService: UserService,
     private readonly samlStrategy: SamlStrategy,
   ) {}

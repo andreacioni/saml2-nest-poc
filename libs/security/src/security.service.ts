@@ -1,9 +1,9 @@
+import { User } from '@app/commons/user';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { User } from '../model/user';
 
 @Injectable()
-export class AuthService {
+export class SecurityService {
   constructor(private jwtService: JwtService) {}
 
   getTokenForUser(user: User) {

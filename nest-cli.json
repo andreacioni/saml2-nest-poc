@@ -1,5 +1,49 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src"
+  "sourceRoot": "apps/saml2-nest-poc/src",
+  "projects": {
+    "security": {
+      "type": "library",
+      "root": "libs/security",
+      "entryFile": "index",
+      "sourceRoot": "libs/security/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/security/tsconfig.lib.json"
+      }
+    },
+    "saml2-nest-poc": {
+      "type": "application",
+      "root": "apps/saml2-nest-poc",
+      "entryFile": "main",
+      "sourceRoot": "apps/saml2-nest-poc/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/saml2-nest-poc/tsconfig.app.json"
+      }
+    },
+    "home": {
+      "type": "application",
+      "root": "apps/home",
+      "entryFile": "main",
+      "sourceRoot": "apps/home/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/home/tsconfig.app.json"
+      }
+    },
+    "commons": {
+      "type": "library",
+      "root": "libs/commons",
+      "entryFile": "index",
+      "sourceRoot": "libs/commons/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/commons/tsconfig.lib.json"
+      }
+    }
+  },
+  "compilerOptions": {
+    "webpack": true,
+    "tsConfigPath": "apps/saml2-nest-poc/tsconfig.app.json"
+  },
+  "monorepo": true,
+  "root": "apps/saml2-nest-poc"
 }
