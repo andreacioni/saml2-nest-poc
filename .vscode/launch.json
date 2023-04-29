@@ -6,7 +6,7 @@
             "request": "launch",
             "name": "Debug Nest Framework",
             "args": [
-                "${workspaceFolder}/src/main.ts",
+                "${workspaceFolder}/apps/saml2-nest-poc/src/main.ts",
                 "--watch"
             ],
             "runtimeArgs": [

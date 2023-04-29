@@ -8,6 +8,7 @@ import { JwtAuthGuard } from './jwt-auth.guard';
 import { JwtStrategy } from './jwt.strategy';
 import { SamlAuthGuard } from './saml-auth.guard';
 import { SamlStrategy } from './saml.strategy';
+import { SecurityController } from './security.controller';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { SamlStrategy } from './saml.strategy';
     }),
     UserModule,
   ],
+  controllers: [SecurityController],
   providers: [
     SecurityService,
     JwtStrategy,
