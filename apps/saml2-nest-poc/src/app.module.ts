@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { SecurityModule } from '@app/security/security.module';
-import { CommonsModule } from '@app/commons/commons.module';
-import { UserModule } from '../../../libs/security/src/user/user.module';
+import { SecurityModule } from 'saml2-nest-lib/lib/security/security.module';
+import { CommonsModule } from 'saml2-nest-lib/lib/commons/commons.module';
+import { UserModule } from 'saml2-nest-lib/lib/security/user/user.module';
 
 @Module({
   imports: [SecurityModule, CommonsModule, UserModule],

@@ -21,16 +21,11 @@
     "test:e2e": "jest --config ./apps/saml2-nest-poc/test/jest-e2e.json"
   },
   "dependencies": {
+    "saml2-nest-lib": "file:/Users/andreacioni/git/saml2-nest-lib/andreacioni-saml2-nest-lib-0.0.2.tgz",
     "@nestjs/common": "^9.0.0",
     "@nestjs/core": "^9.0.0",
-    "@nestjs/jwt": "^9.0.0",
-    "@nestjs/passport": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
-    "passport": "^0.6.0",
-    "passport-jwt": "^4.0.0",
-    "passport-saml": "^3.2.1",
     "reflect-metadata": "^0.1.13",
-    "rimraf": "^3.0.2",
     "rxjs": "^7.2.0"
   },
   "devDependencies": {
@@ -45,6 +40,7 @@
     "@types/supertest": "^2.0.11",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
+    "rimraf": "^3.0.2",
     "eslint": "^8.0.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
@@ -75,12 +71,7 @@
     "coverageDirectory": "./coverage",
     "testEnvironment": "node",
     "roots": [
-      "<rootDir>/libs/",
       "<rootDir>/apps/"
-    ],
-    "moduleNameMapper": {
-      "^@app/security(|/.*)$": "<rootDir>/libs/security/src/$1",
-      "^@app/commons(|/.*)$": "<rootDir>/libs/commons/src/$1"
-    }
+    ]
   }
 }
