@@ -21,7 +21,7 @@
     "test:e2e": "jest --config ./apps/saml2-nest-poc/test/jest-e2e.json"
   },
   "dependencies": {
-    "saml2-nest-lib": "file:/Users/andreacioni/git/saml2-nest-lib/andreacioni-saml2-nest-lib-0.0.2.tgz",
+    "@andreacioni/saml2-nest-lib": "0.0.2",
     "@nestjs/common": "^9.0.0",
     "@nestjs/core": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
