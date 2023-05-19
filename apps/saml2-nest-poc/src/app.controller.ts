@@ -1,13 +1,14 @@
-import { Controller, UseGuards, Request, Get, Response } from '@nestjs/common';
+import { Controller, UseGuards, Request, Get, Header } from '@nestjs/common';
 import { resolve } from 'path';
-import express from 'express';
 import { JwtAuthGuard } from '@andreacioni/saml2-nest-lib/security/jwt-auth.guard';
+import { readFile } from 'fs/promises';
 
 @Controller()
 export class AppController {
   @Get()
-  async homepage(@Response() res: express.Response) {
-    res.sendFile(resolve('web/index.html'));
+  @Header('Content-Type', 'text/html')
+  async homepage() {
+    return readFile(resolve('web/index.html'));
   }
 
   @UseGuards(JwtAuthGuard)
