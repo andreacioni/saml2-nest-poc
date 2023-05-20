@@ -1,6 +1,6 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { Strategy, Profile } from 'passport-saml';
+import { Strategy, Profile } from '@node-saml/passport-saml';
 import { User } from '../model/user';
 
 @Injectable()
