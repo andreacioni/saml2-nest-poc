@@ -11,8 +11,6 @@ import { MyLogger } from './my-logger.service';
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
-  private readonly decoder = new TextDecoder();
-
   constructor(private readonly log: MyLogger) {}
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     this.log.setContext(context.getClass().name);
@@ -33,7 +31,7 @@ export class LoggingInterceptor implements NestInterceptor {
     if (reqBody) {
       this.log
         .getWinstonLogger()
-        .log('info', `${method} ${url}`, { body: reqBody });
+        .log('info', `${method} ${url}`, { body: reqBody, headers: headers });
     } else {
       this.log.log(`${method} ${url}`);
     }
