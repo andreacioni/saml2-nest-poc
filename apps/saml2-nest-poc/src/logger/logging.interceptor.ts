@@ -4,17 +4,15 @@ import {
   Injectable,
   NestInterceptor,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
 import { MyLogger } from './my-logger.service';
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
   constructor(private readonly log: MyLogger) {}
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    this.log.setContext(context.getClass().name);
-
+    this.appendMeta('context', context.getClass().name);
+    /* 
     const req = context.switchToHttp().getRequest<Request>();
 
     const headers = req.headers;
@@ -23,30 +21,47 @@ export class LoggingInterceptor implements NestInterceptor {
     const url = req.url;
 
     if (typeof traceId == 'string') {
-      this.log.setTraceId(traceId);
+      this.setTraceId(traceId);
     }
 
     const reqBody = req.body;
 
     if (reqBody) {
-      this.log
-        .getWinstonLogger()
-        .log('info', `${method} ${url}`, { body: reqBody, headers: headers });
+      this.log.getWinstonLogger().debug(`${method} ${url}`, {
+        body: reqBody,
+        headers: headers,
+      });
     } else {
-      this.log.log(`${method} ${url}`);
-    }
+      this.log.getWinstonLogger().debug(`${method} ${url}`);
+    } */
 
-    return next.handle().pipe(
+    return next.handle() /* .pipe(
       tap((resBody: unknown) => {
         const res = context.switchToHttp().getResponse<Response>();
         const statusCode = res.statusCode;
 
         if (resBody) {
-          this.log.log(`${statusCode} | ${resBody}`);
+          this.log.getWinstonLogger().debug(`${statusCode}`, {
+            body: resBody,
+            headers: res.getHeaders(),
+          });
         } else {
-          this.log.log(`${statusCode}`);
+          this.log.getWinstonLogger().debug(`${statusCode}`, {
+            headers: res.getHeaders(),
+          });
         }
       }),
-    );
+    ) */;
+  }
+
+  private appendMeta(name: string, value: any) {
+    let defaultMeta = this.log.getWinstonLogger().defaultMeta ?? {};
+    if (defaultMeta.traceId) {
+      throw new Error(
+        'traceId already set on logger defaultMeta, did you set "scope: Scope.REQUEST" ',
+      );
+    }
+    defaultMeta = { ...defaultMeta, [name]: value };
+    this.log.getWinstonLogger().defaultMeta = defaultMeta;
   }
 }

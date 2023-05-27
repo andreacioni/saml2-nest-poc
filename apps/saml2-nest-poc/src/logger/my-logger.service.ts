@@ -9,6 +9,7 @@ export class MyLogger extends WinstonLogger {
     const loggerOpts: LoggerOptions = {
       transports: new transports.Console(),
       format: format.combine(format.timestamp(), format.json()),
+      level: 'debug',
     };
     super(createLogger(loggerOpts));
   }
