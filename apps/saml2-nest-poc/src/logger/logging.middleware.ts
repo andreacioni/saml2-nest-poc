@@ -1,31 +1,62 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
+import { randomUUID } from 'crypto';
 import { NextFunction, Request, Response } from 'express';
 import { MyLogger } from './my-logger.service';
 
 @Injectable()
 export class LoggingMiddleware implements NestMiddleware {
+  private readonly HEADERS = ['X-Trace-Id'];
   constructor(private readonly log: MyLogger) {}
   use(req: Request, res: Response, next: NextFunction) {
-    const { method, originalUrl, headers, body } = req;
-    const traceId = headers['x-trace-id'];
+    const startTs = new Date().getTime();
+    const { method, originalUrl, headers, body, ip } = req;
+    let traceId = headers['x-trace-id'];
 
-    //this metadata get appended to all the
+    if (!traceId) {
+      traceId = randomUUID();
+      req.headers = { ...req.headers, ['x-trace-id']: traceId };
+    }
+
+    //this metadata get appended to all the logger instances
+    this.appendMeta('trace_id', traceId);
     if (originalUrl) {
       const urlWithoutParams = originalUrl.split('?')[0];
-      this.appendMeta('requestPath', urlWithoutParams);
+      this.appendMeta('request_path', urlWithoutParams);
     }
-    if (traceId) {
-      this.appendMeta('traceId', traceId);
+    if (ip) {
+      this.appendMeta('remote_ip', ip);
     }
+
+    this.propagateHeaders(req, res);
 
     this.log
       .getWinstonLogger()
-      .debug(`${method} ${originalUrl}`, { body: body });
-    res.on('finish', (data: any) => {
+      .info(`${method} ${originalUrl}`, { request_body: body });
+
+    //monkey patch the res.send function of express
+    const originalSend = res.send.bind(res);
+    let responseBody: any;
+    res.send = (body: any) => {
+      responseBody = body;
+      return originalSend(body);
+    };
+
+    res.on('error', (err) => {
+      this.log.getWinstonLogger().error('response error:' + err);
+    });
+
+    res.on('close', () => {
+      this.log.getWinstonLogger().debug('response stream closed');
+    });
+
+    //attach a listener to finish callback
+    res.on('finish', () => {
+      const endTs = new Date().getTime();
       const { statusCode, statusMessage } = res;
-      this.log
-        .getWinstonLogger()
-        .debug(`${statusCode} - ${statusMessage}`, { body: data });
+      this.log.getWinstonLogger().info(`${statusCode} - ${statusMessage}`, {
+        response_body: responseBody,
+        elapsed: endTs - startTs,
+      });
     });
     next();
   }
@@ -37,5 +68,16 @@ export class LoggingMiddleware implements NestMiddleware {
     }
     defaultMeta = { ...defaultMeta, [name]: value };
     this.log.getWinstonLogger().defaultMeta = defaultMeta;
+  }
+
+  private propagateHeaders(req: Request, res: Response) {
+    const reqHeaders = req.headers;
+
+    this.HEADERS.forEach((h) => {
+      const value = reqHeaders[h.toLocaleLowerCase()];
+      if (value) {
+        res.setHeader(h, value);
+      }
+    });
   }
 }
