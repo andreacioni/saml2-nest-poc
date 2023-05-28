@@ -13,21 +13,4 @@ export class MyLogger extends WinstonLogger {
     };
     super(createLogger(loggerOpts));
   }
-
-  setTraceId(traceId: string) {
-    if (this.traceId) {
-      this.warn(
-        `traceId is already set (was ${this.traceId}, incoming: ${traceId})`,
-      );
-    } else {
-      this.traceId = traceId;
-      this.appendMeta('traceId', traceId);
-    }
-  }
-
-  private appendMeta(name: string, value: any) {
-    let defaultMeta = this.getWinstonLogger().defaultMeta ?? {};
-    defaultMeta = { ...defaultMeta, name: value };
-    this.getWinstonLogger().defaultMeta = defaultMeta;
-  }
 }

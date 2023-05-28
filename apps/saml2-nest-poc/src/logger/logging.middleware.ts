@@ -6,21 +6,26 @@ import { MyLogger } from './my-logger.service';
 export class LoggingMiddleware implements NestMiddleware {
   constructor(private readonly log: MyLogger) {}
   use(req: Request, res: Response, next: NextFunction) {
-    const headers = req.headers;
+    const { method, originalUrl, headers, body } = req;
     const traceId = headers['x-trace-id'];
-    const method = req.method;
-    const url = req.baseUrl;
 
-    if (url) {
-      this.appendMeta('requestPath', url);
+    //this metadata get appended to all the
+    if (originalUrl) {
+      const urlWithoutParams = originalUrl.split('?')[0];
+      this.appendMeta('requestPath', urlWithoutParams);
     }
     if (traceId) {
       this.appendMeta('traceId', traceId);
     }
-    this.log.debug!(`${method} ${url}`);
-    res.on('finish', () => {
-      const statusCode = res.statusCode;
-      this.log.debug!(`${statusCode}`);
+
+    this.log
+      .getWinstonLogger()
+      .debug(`${method} ${originalUrl}`, { body: body });
+    res.on('finish', (data: any) => {
+      const { statusCode, statusMessage } = res;
+      this.log
+        .getWinstonLogger()
+        .debug(`${statusCode} - ${statusMessage}`, { body: data });
     });
     next();
   }
@@ -28,9 +33,7 @@ export class LoggingMiddleware implements NestMiddleware {
   private appendMeta(name: string, value: any) {
     let defaultMeta = this.log.getWinstonLogger().defaultMeta ?? {};
     if (defaultMeta.traceId) {
-      throw new Error(
-        'traceId already set on logger defaultMeta, did you set "scope: Scope.REQUEST" ',
-      );
+      this.log.warn('traceId is already set, this is clearly an error');
     }
     defaultMeta = { ...defaultMeta, [name]: value };
     this.log.getWinstonLogger().defaultMeta = defaultMeta;

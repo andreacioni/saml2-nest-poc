@@ -56,11 +56,6 @@ export class LoggingInterceptor implements NestInterceptor {
 
   private appendMeta(name: string, value: any) {
     let defaultMeta = this.log.getWinstonLogger().defaultMeta ?? {};
-    if (defaultMeta.traceId) {
-      throw new Error(
-        'traceId already set on logger defaultMeta, did you set "scope: Scope.REQUEST" ',
-      );
-    }
     defaultMeta = { ...defaultMeta, [name]: value };
     this.log.getWinstonLogger().defaultMeta = defaultMeta;
   }

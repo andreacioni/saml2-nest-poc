@@ -5,7 +5,7 @@ import { MiddlewareConsumer, Module, Scope } from '@nestjs/common';
 import { AppController } from './app.controller';
 
 import { APP_FILTER, HttpAdapterHost } from '@nestjs/core';
-import { AllExceptionsFilter } from './exception.filter';
+import { AllExceptionsFilter } from './logger/exception.filter';
 import { LoggerModule } from './logger/logger.module';
 import { LoggingMiddleware } from './logger/logging.middleware';
 import { MyLogger } from './logger/my-logger.service';
