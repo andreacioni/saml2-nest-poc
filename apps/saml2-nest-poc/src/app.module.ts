@@ -11,7 +11,7 @@ import { LoggingMiddleware } from './logger/logging.middleware';
 import { MyLogger } from './logger/my-logger.service';
 
 @Module({
-  imports: [SecurityModule, CommonsModule, UserModule, LoggerModule],
+  imports: [SecurityModule, CommonsModule, UserModule, LoggerModule.forRoot()],
   controllers: [AppController],
   providers: [
     {
