@@ -1,5 +1,11 @@
 import { JwtAuthGuard } from '@andreacioni/saml2-nest-lib/security/jwt-auth.guard';
-import { Controller, Get, Request, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  InternalServerErrorException,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import { setInterval } from 'timers/promises';
 import { MyLogger } from './logger/my-logger.service';
 
@@ -14,7 +20,7 @@ export class AppController {
   async homepage() {
     await setInterval(100);
     this.log.warn!('dio di dio');
-    //throw new InternalServerErrorException(null, 'dio bellissimo');
+    throw new InternalServerErrorException(null, 'dio bellissimo');
     return { dio: 'di dio' };
   }
 
