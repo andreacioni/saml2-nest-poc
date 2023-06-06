@@ -4,15 +4,22 @@ import { UserModule } from '@andreacioni/saml2-nest-lib/security/user/user.modul
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 
-import { LOGGER_OPTS } from './config';
+import { ConfigModule } from '@nestjs/config';
 import { LoggerModule } from './logger/logger.module';
+
+import loggerConfig from './logger/logger.config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      cache: true,
+      isGlobal: true,
+      load: [loggerConfig],
+    }),
     SecurityModule,
     CommonsModule,
     UserModule,
-    LoggerModule.forRoot(LOGGER_OPTS),
+    LoggerModule.forRoot(),
   ],
   controllers: [AppController],
 })

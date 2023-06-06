@@ -31,9 +31,13 @@ export class LoggingMiddleware implements NestMiddleware {
 
     this.log
       .getWinstonLogger()
-      .info(`${method} ${originalUrl}`, { request_body: body });
+      .info(
+        `${method} ${originalUrl}`,
+        this.log.getOptions()?.printBody ? { request_body: body } : {},
+      );
 
     //monkey patch the res.send function of express
+    //to be able to log the response
     const originalSend = res.send.bind(res);
     let responseBody: any;
     res.send = (body: any) => {
@@ -54,8 +58,12 @@ export class LoggingMiddleware implements NestMiddleware {
       const endTs = new Date().getTime();
       const { statusCode, statusMessage } = res;
       this.log.getWinstonLogger().info(`${statusCode} - ${statusMessage}`, {
-        response_body: responseBody,
         elapsed: endTs - startTs,
+        ...(this.log.getOptions()?.printBody
+          ? {
+              response_body: responseBody,
+            }
+          : {}),
       });
     });
     next();

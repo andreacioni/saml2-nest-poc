@@ -5,6 +5,7 @@ import {
   Provider,
   Scope,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { APP_FILTER, HttpAdapterHost } from '@nestjs/core';
 import { AllExceptionsFilter } from './exception.filter';
 import { LoggerModuleOptions } from './logger.options';
@@ -42,13 +43,22 @@ function createLoggerProviders(options?: LoggerModuleOptions): Provider[] {
   return [
     LoggingInterceptor,
     LoggingMiddleware,
-
     {
       provide: MyLogger,
       scope: Scope.REQUEST,
-      useFactory: () => {
-        return new MyLogger(options);
+      useFactory: (configService?: ConfigService) => {
+        if (options) {
+          return new MyLogger(options);
+        } else {
+          return new MyLogger(configService?.get('logger'));
+        }
       },
+      inject: [
+        {
+          token: ConfigService,
+          optional: true,
+        },
+      ],
     },
   ];
 }
