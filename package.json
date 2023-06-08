@@ -27,8 +27,10 @@
     "@nestjs/config": "^2.3.2",
     "@nestjs/core": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
+    "@willsoto/nestjs-prometheus": "^5.1.2",
     "js-yaml": "^4.1.0",
     "nest-winston": "^1.9.2",
+    "prom-client": "^14.2.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0",
     "winston": "^3.8.2"

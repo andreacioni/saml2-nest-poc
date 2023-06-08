@@ -7,6 +7,7 @@ import { AppController } from './app.controller';
 import { ConfigModule } from '@nestjs/config';
 import { LoggerModule } from './logger/logger.module';
 
+import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 import loggerConfig from './logger/logger.config';
 
 @Module({
@@ -20,6 +21,7 @@ import loggerConfig from './logger/logger.config';
     CommonsModule,
     UserModule,
     LoggerModule.forRoot(),
+    PrometheusModule.register(),
   ],
   controllers: [AppController],
 })
